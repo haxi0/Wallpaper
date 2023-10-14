@@ -9,14 +9,14 @@
 //Converting colors to proper format
 function normalizeColor(hexCode) {
     return [(hexCode >> 16 & 255) / 255, (hexCode >> 8 & 255) / 255, (255 & hexCode) / 255]
-  } ["SCREEN", "LINEAR_LIGHT"].reduce((hexCode, t, n) => Object.assign(hexCode, {
+} ["SCREEN", "LINEAR_LIGHT"].reduce((hexCode, t, n) => Object.assign(hexCode, {
     [t]: n
-  }), {});
-  
-  //Essential functionality of WebGl
-  //t = width
-  //n = height
-  class MiniGl {
+}), {});
+
+//Essential functionality of WebGl
+//t = width
+//n = height
+class MiniGl {
     constructor(canvas, width, height, debug = false) {
         const _miniGl = this,
             debug_output = -1 !== document.location.search.toLowerCase().indexOf("debug=webgl");
@@ -24,10 +24,10 @@ function normalizeColor(hexCode) {
             antialias: true
         }), _miniGl.meshes = [];
         const context = _miniGl.gl;
-        width && height && this.setSize(width, height), _miniGl.lastDebugMsg, _miniGl.debug = debug && debug_output ? function(e) {
+        width && height && this.setSize(width, height), _miniGl.lastDebugMsg, _miniGl.debug = debug && debug_output ? function (e) {
             const t = new Date;
             t - _miniGl.lastDebugMsg > 1e3 && console.log("---"), console.log(t.toLocaleTimeString() + Array(Math.max(0, 32 - e.length)).join(" ") + e + ": ", ...Array.from(arguments).slice(1)), _miniGl.lastDebugMsg = t
-        } : () => {}, Object.defineProperties(_miniGl, {
+        } : () => { }, Object.defineProperties(_miniGl, {
             Material: {
                 enumerable: false,
                 value: class {
@@ -43,20 +43,20 @@ function normalizeColor(hexCode) {
                             return Object.entries(uniforms).map(([uniform, value]) => value.getDeclaration(uniform, type)).join("\n")
                         }
                         material.uniforms = uniforms, material.uniformInstances = [];
-  
+
                         const prefix = "\n              precision highp float;\n            ";
-                        material.vertexSource = `\n              ${prefix}\n              attribute vec4 position;\n              attribute vec2 uv;\n              attribute vec2 uvNorm;\n              ${getUniformVariableDeclarations(_miniGl.commonUniforms,"vertex")}\n              ${getUniformVariableDeclarations(uniforms,"vertex")}\n              ${vertexShaders}\n            `,
-                        material.Source = `\n              ${prefix}\n              ${getUniformVariableDeclarations(_miniGl.commonUniforms,"fragment")}\n              ${getUniformVariableDeclarations(uniforms,"fragment")}\n              ${fragments}\n            `,
-                        material.vertexShader = getShaderByType(context.VERTEX_SHADER, material.vertexSource),
-                        material.fragmentShader = getShaderByType(context.FRAGMENT_SHADER, material.Source),
-                        material.program = context.createProgram(),
-                        context.attachShader(material.program, material.vertexShader),
-                        context.attachShader(material.program, material.fragmentShader),
-                        context.linkProgram(material.program),
-                        context.getProgramParameter(material.program, context.LINK_STATUS) || console.error(context.getProgramInfoLog(material.program)),
-                        context.useProgram(material.program),
-                        material.attachUniforms(void 0, _miniGl.commonUniforms),
-                        material.attachUniforms(void 0, material.uniforms)
+                        material.vertexSource = `\n              ${prefix}\n              attribute vec4 position;\n              attribute vec2 uv;\n              attribute vec2 uvNorm;\n              ${getUniformVariableDeclarations(_miniGl.commonUniforms, "vertex")}\n              ${getUniformVariableDeclarations(uniforms, "vertex")}\n              ${vertexShaders}\n            `,
+                            material.Source = `\n              ${prefix}\n              ${getUniformVariableDeclarations(_miniGl.commonUniforms, "fragment")}\n              ${getUniformVariableDeclarations(uniforms, "fragment")}\n              ${fragments}\n            `,
+                            material.vertexShader = getShaderByType(context.VERTEX_SHADER, material.vertexSource),
+                            material.fragmentShader = getShaderByType(context.FRAGMENT_SHADER, material.Source),
+                            material.program = context.createProgram(),
+                            context.attachShader(material.program, material.vertexShader),
+                            context.attachShader(material.program, material.fragmentShader),
+                            context.linkProgram(material.program),
+                            context.getProgramParameter(material.program, context.LINK_STATUS) || console.error(context.getProgramInfoLog(material.program)),
+                            context.useProgram(material.program),
+                            material.attachUniforms(void 0, _miniGl.commonUniforms),
+                            material.attachUniforms(void 0, material.uniforms)
                     }
                     //t = uniform
                     attachUniforms(name, uniforms) {
@@ -86,7 +86,7 @@ function normalizeColor(hexCode) {
                             vec3: "3fv",
                             vec4: "4fv",
                             mat4: "Matrix4fv"
-                        } [this.type] || "1f", this.update()
+                        }[this.type] || "1f", this.update()
                     }
                     update(value) {
                         void 0 !== this.value && context[`uniform${this.typeFn}`](value, 0 === this.typeFn.indexOf("Matrix") ? this.transpose : this.value, 0 === this.typeFn.indexOf("Matrix") ? this.value : null)
@@ -100,18 +100,18 @@ function normalizeColor(hexCode) {
                             if ("array" === uniform.type) return uniform.value[0].getDeclaration(name, type, uniform.value.length) + `\nconst int ${name}_length = ${uniform.value.length};`;
                             if ("struct" === uniform.type) {
                                 let name_no_prefix = name.replace("u_", "");
-                                return name_no_prefix = 
-                                  name_no_prefix.charAt(0).toUpperCase() + 
-                                  name_no_prefix.slice(1), 
-                                  `uniform struct ${name_no_prefix} 
-                                  {\n` + 
-                                  Object.entries(uniform.value).map(([name, uniform]) => 
-                                  uniform.getDeclaration(name, type)
-                                  .replace(/^uniform/, ""))
-                                  .join("") 
-                                  + `\n} ${name}${length>0?`[${length}]`:""};`
+                                return name_no_prefix =
+                                    name_no_prefix.charAt(0).toUpperCase() +
+                                    name_no_prefix.slice(1),
+                                    `uniform struct ${name_no_prefix} 
+                                  {\n` +
+                                    Object.entries(uniform.value).map(([name, uniform]) =>
+                                        uniform.getDeclaration(name, type)
+                                            .replace(/^uniform/, ""))
+                                        .join("")
+                                    + `\n} ${name}${length > 0 ? `[${length}]` : ""};`
                             }
-                            return `uniform ${uniform.type} ${name}${length>0?`[${length}]`:""};`
+                            return `uniform ${uniform.type} ${name}${length > 0 ? `[${length}]` : ""};`
                         }
                     }
                 }
@@ -120,7 +120,7 @@ function normalizeColor(hexCode) {
                 enumerable: !1,
                 value: class {
                     constructor(width, height, n, i, orientation) {
-                      context.createBuffer(), this.attributes = {
+                        context.createBuffer(), this.attributes = {
                             position: new _miniGl.Attribute({
                                 target: context.ARRAY_BUFFER,
                                 size: 3
@@ -160,21 +160,21 @@ function normalizeColor(hexCode) {
                     setSize(width = 1, height = 1, orientation = "xz") {
                         const geometry = this;
                         geometry.width = width,
-                        geometry.height = height,
-                        geometry.orientation = orientation,
-                        geometry.attributes.position.values && geometry.attributes.position.values.length === 3 * geometry.vertexCount 
-                        || (geometry.attributes.position.values = new Float32Array(3 * geometry.vertexCount));
+                            geometry.height = height,
+                            geometry.orientation = orientation,
+                            geometry.attributes.position.values && geometry.attributes.position.values.length === 3 * geometry.vertexCount
+                            || (geometry.attributes.position.values = new Float32Array(3 * geometry.vertexCount));
                         const o = width / -2,
                             r = height / -2,
                             segment_width = width / geometry.xSegCount,
                             segment_height = height / geometry.ySegCount;
-                        for (let yIndex= 0; yIndex <= geometry.ySegCount; yIndex++) {
+                        for (let yIndex = 0; yIndex <= geometry.ySegCount; yIndex++) {
                             const t = r + yIndex * segment_height;
                             for (let xIndex = 0; xIndex <= geometry.xSegCount; xIndex++) {
                                 const r = o + xIndex * segment_width,
                                     l = yIndex * (geometry.xSegCount + 1) + xIndex;
-                                geometry.attributes.position.values[3 * l + "xyz".indexOf(orientation[0])] = r, 
-                                geometry.attributes.position.values[3 * l + "xyz".indexOf(orientation[1])] = -t
+                                geometry.attributes.position.values[3 * l + "xyz".indexOf(orientation[0])] = r,
+                                    geometry.attributes.position.values[3 * l + "xyz".indexOf(orientation[1])] = -t
                             }
                         }
                         geometry.attributes.position.update(), _miniGl.debug("Geometry.setSize", {
@@ -198,7 +198,7 @@ function normalizeColor(hexCode) {
                         })
                     }
                     draw() {
-                      context.useProgram(this.material.program), this.material.uniformInstances.forEach(({
+                        context.useProgram(this.material.program), this.material.uniformInstances.forEach(({
                             uniform: e,
                             location: t
                         }) => e.update(t)), this.attributeInstances.forEach(({
@@ -225,7 +225,7 @@ function normalizeColor(hexCode) {
                         return this.target === context.ARRAY_BUFFER && (context.enableVertexAttribArray(n), context.vertexAttribPointer(n, this.size, this.type, this.normalized, 0, 0)), n
                     }
                     use(e) {
-                      context.bindBuffer(this.target, this.buffer), this.target === context.ARRAY_BUFFER && (context.enableVertexAttribArray(e), context.vertexAttribPointer(e, this.size, this.type, this.normalized, 0, 0))
+                        context.bindBuffer(this.target, this.buffer), this.target === context.ARRAY_BUFFER && (context.enableVertexAttribArray(e), context.vertexAttribPointer(e, this.size, this.type, this.normalized, 0, 0))
                     }
                 }
             }
@@ -263,22 +263,22 @@ function normalizeColor(hexCode) {
     render() {
         this.gl.clearColor(0, 0, 0, 0), this.gl.clearDepth(1), this.meshes.forEach(e => e.draw())
     }
-  }
-  
-  
-  
-  //Sets initial properties
-  function e(object, propertyName, val) {
+}
+
+
+
+//Sets initial properties
+function e(object, propertyName, val) {
     return propertyName in object ? Object.defineProperty(object, propertyName, {
         value: val,
         enumerable: !0,
         configurable: !0,
         writable: !0
     }) : object[propertyName] = val, object
-  }
-  
-  //Gradient object
-  class Gradient {
+}
+
+//Gradient object
+class Gradient {
     constructor(...t) {
         e(this, "el", void 0), e(this, "cssVarRetries", 0), e(this, "maxCssVarRetries", 200), e(this, "angle", 0), e(this, "isLoadedClass", !1), e(this, "isScrolling", !1), /*e(this, "isStatic", o.disableAmbientAnimations()),*/ e(this, "scrollingTimeout", void 0), e(this, "scrollingRefreshDelay", 200), e(this, "isIntersecting", !1), e(this, "shaderFiles", void 0), e(this, "vertexShader", void 0), e(this, "sectionColors", void 0), e(this, "computedCanvasStyle", void 0), e(this, "conf", void 0), e(this, "uniforms", void 0), e(this, "t", 1253106), e(this, "last", 0), e(this, "width", void 0), e(this, "minWidth", 1111), e(this, "height", 600), e(this, "xSegCount", void 0), e(this, "ySegCount", void 0), e(this, "mesh", void 0), e(this, "material", void 0), e(this, "geometry", void 0), e(this, "minigl", void 0), e(this, "scrollObserver", void 0), e(this, "amp", 320), e(this, "seed", 5), e(this, "freqX", 14e-5), e(this, "freqY", 29e-5), e(this, "freqDelta", 1e-5), e(this, "activeColors", [1, 1, 1, 1]), e(this, "isMetaKey", !1), e(this, "isGradientLegendVisible", !1), e(this, "isMouseDown", !1), e(this, "handleScroll", () => {
             clearTimeout(this.scrollingTimeout), this.scrollingTimeout = setTimeout(this.handleScrollEnd, this.scrollingRefreshDelay), this.isGradientLegendVisible && this.hideGradientLegend(), this.conf.playing && (this.isScrolling = !0, this.pause())
@@ -297,22 +297,22 @@ function normalizeColor(hexCode) {
                     this.isMetaKey && (e = -160), this.t += e
                 }
                 this.mesh.material.uniforms.u_time.value = this.t, this.minigl.render()
-  
+
             }
             if (0 !== this.last && this.isStatic) return this.minigl.render(), void this.disconnect();
             (/*this.isIntersecting && */this.conf.playing || this.isMouseDown) && requestAnimationFrame(this.animate)
         }), e(this, "addIsLoadedClass", () => {
             /*this.isIntersecting && */!this.isLoadedClass && (this.isLoadedClass = !0, this.el.classList.add("isLoaded"), setTimeout(() => {
-                this.el.parentElement.classList.add("isLoaded")
-            }, 3e3))
+            this.el.parentElement.classList.add("isLoaded")
+        }, 3e3))
         }), e(this, "pause", () => {
             this.conf.playing = false
         }), e(this, "play", () => {
             requestAnimationFrame(this.animate), this.conf.playing = true
-        }), e(this,"initGradient", (selector) => {
-          this.el = document.querySelector(selector);
-          this.connect();
-          return this;
+        }), e(this, "initGradient", (selector) => {
+            this.el = document.querySelector(selector);
+            this.connect();
+            return this;
         })
     }
     async connect() {
@@ -322,31 +322,31 @@ function normalizeColor(hexCode) {
             blend: "//\n// https://github.com/jamieowen/glsl-blend\n//\n\n// Normal\n\nvec3 blendNormal(vec3 base, vec3 blend) {\n\treturn blend;\n}\n\nvec3 blendNormal(vec3 base, vec3 blend, float opacity) {\n\treturn (blendNormal(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Screen\n\nfloat blendScreen(float base, float blend) {\n\treturn 1.0-((1.0-base)*(1.0-blend));\n}\n\nvec3 blendScreen(vec3 base, vec3 blend) {\n\treturn vec3(blendScreen(base.r,blend.r),blendScreen(base.g,blend.g),blendScreen(base.b,blend.b));\n}\n\nvec3 blendScreen(vec3 base, vec3 blend, float opacity) {\n\treturn (blendScreen(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Multiply\n\nvec3 blendMultiply(vec3 base, vec3 blend) {\n\treturn base*blend;\n}\n\nvec3 blendMultiply(vec3 base, vec3 blend, float opacity) {\n\treturn (blendMultiply(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Overlay\n\nfloat blendOverlay(float base, float blend) {\n\treturn base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend));\n}\n\nvec3 blendOverlay(vec3 base, vec3 blend) {\n\treturn vec3(blendOverlay(base.r,blend.r),blendOverlay(base.g,blend.g),blendOverlay(base.b,blend.b));\n}\n\nvec3 blendOverlay(vec3 base, vec3 blend, float opacity) {\n\treturn (blendOverlay(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Hard light\n\nvec3 blendHardLight(vec3 base, vec3 blend) {\n\treturn blendOverlay(blend,base);\n}\n\nvec3 blendHardLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendHardLight(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Soft light\n\nfloat blendSoftLight(float base, float blend) {\n\treturn (blend<0.5)?(2.0*base*blend+base*base*(1.0-2.0*blend)):(sqrt(base)*(2.0*blend-1.0)+2.0*base*(1.0-blend));\n}\n\nvec3 blendSoftLight(vec3 base, vec3 blend) {\n\treturn vec3(blendSoftLight(base.r,blend.r),blendSoftLight(base.g,blend.g),blendSoftLight(base.b,blend.b));\n}\n\nvec3 blendSoftLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendSoftLight(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Color dodge\n\nfloat blendColorDodge(float base, float blend) {\n\treturn (blend==1.0)?blend:min(base/(1.0-blend),1.0);\n}\n\nvec3 blendColorDodge(vec3 base, vec3 blend) {\n\treturn vec3(blendColorDodge(base.r,blend.r),blendColorDodge(base.g,blend.g),blendColorDodge(base.b,blend.b));\n}\n\nvec3 blendColorDodge(vec3 base, vec3 blend, float opacity) {\n\treturn (blendColorDodge(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Color burn\n\nfloat blendColorBurn(float base, float blend) {\n\treturn (blend==0.0)?blend:max((1.0-((1.0-base)/blend)),0.0);\n}\n\nvec3 blendColorBurn(vec3 base, vec3 blend) {\n\treturn vec3(blendColorBurn(base.r,blend.r),blendColorBurn(base.g,blend.g),blendColorBurn(base.b,blend.b));\n}\n\nvec3 blendColorBurn(vec3 base, vec3 blend, float opacity) {\n\treturn (blendColorBurn(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Vivid Light\n\nfloat blendVividLight(float base, float blend) {\n\treturn (blend<0.5)?blendColorBurn(base,(2.0*blend)):blendColorDodge(base,(2.0*(blend-0.5)));\n}\n\nvec3 blendVividLight(vec3 base, vec3 blend) {\n\treturn vec3(blendVividLight(base.r,blend.r),blendVividLight(base.g,blend.g),blendVividLight(base.b,blend.b));\n}\n\nvec3 blendVividLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendVividLight(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Lighten\n\nfloat blendLighten(float base, float blend) {\n\treturn max(blend,base);\n}\n\nvec3 blendLighten(vec3 base, vec3 blend) {\n\treturn vec3(blendLighten(base.r,blend.r),blendLighten(base.g,blend.g),blendLighten(base.b,blend.b));\n}\n\nvec3 blendLighten(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLighten(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Linear burn\n\nfloat blendLinearBurn(float base, float blend) {\n\t// Note : Same implementation as BlendSubtractf\n\treturn max(base+blend-1.0,0.0);\n}\n\nvec3 blendLinearBurn(vec3 base, vec3 blend) {\n\t// Note : Same implementation as BlendSubtract\n\treturn max(base+blend-vec3(1.0),vec3(0.0));\n}\n\nvec3 blendLinearBurn(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLinearBurn(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Linear dodge\n\nfloat blendLinearDodge(float base, float blend) {\n\t// Note : Same implementation as BlendAddf\n\treturn min(base+blend,1.0);\n}\n\nvec3 blendLinearDodge(vec3 base, vec3 blend) {\n\t// Note : Same implementation as BlendAdd\n\treturn min(base+blend,vec3(1.0));\n}\n\nvec3 blendLinearDodge(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLinearDodge(base, blend) * opacity + base * (1.0 - opacity));\n}\n\n// Linear light\n\nfloat blendLinearLight(float base, float blend) {\n\treturn blend<0.5?blendLinearBurn(base,(2.0*blend)):blendLinearDodge(base,(2.0*(blend-0.5)));\n}\n\nvec3 blendLinearLight(vec3 base, vec3 blend) {\n\treturn vec3(blendLinearLight(base.r,blend.r),blendLinearLight(base.g,blend.g),blendLinearLight(base.b,blend.b));\n}\n\nvec3 blendLinearLight(vec3 base, vec3 blend, float opacity) {\n\treturn (blendLinearLight(base, blend) * opacity + base * (1.0 - opacity));\n}",
             fragment: "varying vec3 v_color;\n\nvoid main() {\n  vec3 color = v_color;\n  if (u_darken_top == 1.0) {\n    vec2 st = gl_FragCoord.xy/resolution.xy;\n    color.g -= pow(st.y + sin(-12.0) * st.x, u_shadow_power) * 0.4;\n  }\n  gl_FragColor = vec4(color, 1.0);\n}"
         },
-        this.conf = {
-            presetName: "",
-            wireframe: false,
-            density: [.06, .16],
-            zoom: 1,
-            rotation: 0,
-            playing: true
-        }, 
-        document.querySelectorAll("canvas").length < 1 ? console.log("DID NOT LOAD HERO STRIPE CANVAS") : (
-          
-          this.minigl = new MiniGl(this.el, null, null, !0), 
-          requestAnimationFrame(() => {
-              this.el && (this.computedCanvasStyle = getComputedStyle(this.el), this.waitForCssVars())
-          })
-          /*
-          this.scrollObserver = await s.create(.1, !1),
-          this.scrollObserver.observe(this.el),
-          this.scrollObserver.onSeparate(() => {
-              window.removeEventListener("scroll", this.handleScroll), window.removeEventListener("mousedown", this.handleMouseDown), window.removeEventListener("mouseup", this.handleMouseUp), window.removeEventListener("keydown", this.handleKeyDown), this.isIntersecting = !1, this.conf.playing && this.pause()
-          }), 
-          this.scrollObserver.onIntersect(() => {
-              window.addEventListener("scroll", this.handleScroll), window.addEventListener("mousedown", this.handleMouseDown), window.addEventListener("mouseup", this.handleMouseUp), window.addEventListener("keydown", this.handleKeyDown), this.isIntersecting = !0, this.addIsLoadedClass(), this.play()
-          })*/
-  
-        )
+            this.conf = {
+                presetName: "",
+                wireframe: false,
+                density: [.06, .16],
+                zoom: 1,
+                rotation: 0,
+                playing: true
+            },
+            document.querySelectorAll("canvas").length < 1 ? console.log("DID NOT LOAD HERO STRIPE CANVAS") : (
+
+                this.minigl = new MiniGl(this.el, null, null, !0),
+                requestAnimationFrame(() => {
+                    this.el && (this.computedCanvasStyle = getComputedStyle(this.el), this.waitForCssVars())
+                })
+                /*
+                this.scrollObserver = await s.create(.1, !1),
+                this.scrollObserver.observe(this.el),
+                this.scrollObserver.onSeparate(() => {
+                    window.removeEventListener("scroll", this.handleScroll), window.removeEventListener("mousedown", this.handleMouseDown), window.removeEventListener("mouseup", this.handleMouseUp), window.removeEventListener("keydown", this.handleKeyDown), this.isIntersecting = !1, this.conf.playing && this.pause()
+                }), 
+                this.scrollObserver.onIntersect(() => {
+                    window.addEventListener("scroll", this.handleScroll), window.addEventListener("mousedown", this.handleMouseDown), window.addEventListener("mouseup", this.handleMouseUp), window.addEventListener("keydown", this.handleKeyDown), this.isIntersecting = !0, this.addIsLoadedClass(), this.play()
+                })*/
+
+            )
     }
     disconnect() {
         this.scrollObserver && (window.removeEventListener("scroll", this.handleScroll), window.removeEventListener("mousedown", this.handleMouseDown), window.removeEventListener("mouseup", this.handleMouseUp), window.removeEventListener("keydown", this.handleKeyDown), this.scrollObserver.disconnect()), window.removeEventListener("resize", this.resize)
@@ -479,7 +479,7 @@ function normalizeColor(hexCode) {
         if (this.computedCanvasStyle && -1 !== this.computedCanvasStyle.getPropertyValue("--gradient-color-1").indexOf("#")) this.init(), this.addIsLoadedClass();
         else {
             if (this.cssVarRetries += 1, this.cssVarRetries > this.maxCssVarRetries) {
-                return this.sectionColors = [16711680, 16711680, 16711935, 65280, 255],void this.init();
+                return this.sectionColors = [16711680, 16711680, 16711935, 65280, 255], void this.init();
             }
             requestAnimationFrame(() => this.waitForCssVars())
         }
@@ -498,23 +498,23 @@ function normalizeColor(hexCode) {
             return hex && `0x${hex.substr(1)}`
         }).filter(Boolean).map(normalizeColor)
     }
-  }
-  
-  
-  
-  
-  /*
-  *Finally initializing the Gradient class, assigning a canvas to it and calling Gradient.connect() which initializes everything,
-  * Use Gradient.pause() and Gradient.play() for controls.
-  *
-  * Here are some default property values you can change anytime:
-  * Amplitude:    Gradient.amp = 0
-  * Colors:       Gradient.sectionColors (if you change colors, use normalizeColor(#hexValue)) before you assign it.
-  *
-  *
-  * Useful functions
-  * Gradient.toggleColor(index)
-  * Gradient.updateFrequency(freq)
-  */
-  var gradient = new Gradient();
-      gradient.initGradient("#gradient-canvas");
+}
+
+
+
+
+/*
+*Finally initializing the Gradient class, assigning a canvas to it and calling Gradient.connect() which initializes everything,
+* Use Gradient.pause() and Gradient.play() for controls.
+*
+* Here are some default property values you can change anytime:
+* Amplitude:    Gradient.amp = 0
+* Colors:       Gradient.sectionColors (if you change colors, use normalizeColor(#hexValue)) before you assign it.
+*
+*
+* Useful functions
+* Gradient.toggleColor(index)
+* Gradient.updateFrequency(freq)
+*/
+var gradient = new Gradient();
+gradient.initGradient("#gradient-canvas");
